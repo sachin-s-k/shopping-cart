@@ -48,7 +48,6 @@ public class UserController {
    @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody RegisterUserRequest  request, UriComponentsBuilder uriComponentsBuilder){
         var user=  userMapper.toEntity(request);
-       System.out.println(user+"====>");
         var response = userRepository.save(user);
         var userDto= userMapper.toDto(user);
         var uri=uriComponentsBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
