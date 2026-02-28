@@ -8,13 +8,17 @@ import com.sachin_s_k.shopping_cart.dtos.UserDto;
 import com.sachin_s_k.shopping_cart.entities.User;
 import com.sachin_s_k.shopping_cart.mappers.UserMapper;
 import com.sachin_s_k.shopping_cart.repositories.UserRepository;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -46,7 +50,13 @@ public class UserController {
         return new ResponseEntity<>(userMapper.toDto(user),HttpStatus.OK);
     }
    @PostMapping
-    public ResponseEntity<UserDto> createUser(@RequestBody RegisterUserRequest  request, UriComponentsBuilder uriComponentsBuilder){
+    public ResponseEntity<?> createUser(@Valid @RequestBody RegisterUserRequest  request, UriComponentsBuilder uriComponentsBuilder){
+
+       if( userRepository.existsByEmail(request.getEmail())){
+           return ResponseEntity.badRequest().body(
+                   Map.of("email","email is already registered.")
+           );
+       }
         var user=  userMapper.toEntity(request);
         var response = userRepository.save(user);
         var userDto= userMapper.toDto(user);
@@ -97,5 +107,6 @@ public class UserController {
 
 
     }
+
 
 }
