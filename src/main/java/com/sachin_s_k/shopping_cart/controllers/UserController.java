@@ -3,14 +3,15 @@ package com.sachin_s_k.shopping_cart.controllers;
 
 import com.sachin_s_k.shopping_cart.dtos.UserDto;
 import com.sachin_s_k.shopping_cart.entities.User;
+import com.sachin_s_k.shopping_cart.mappers.UserMapper;
 import com.sachin_s_k.shopping_cart.repositories.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @RestController
 
@@ -19,9 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     @GetMapping
-    public Iterable<UserDto> sayHello(){
-        return  userRepository.findAll().stream().map(user -> new UserDto(user.getId(),user.getName(),user.getEmail())).toList();
+    public Iterable<UserDto> sayHello(
+            @RequestHeader(name="x-auth-token",required = false) String authToken,@RequestParam(required = false,defaultValue = "",name = "sort") String sortBy){
+        System.out.println(authToken+"=======>");
+
+        if(!Set.of("name","email").contains(sortBy)){
+
+            sortBy="name";
+        }
+        return  userRepository.findAll(Sort.by(sortBy)).stream().map(userMapper::toDto).toList();
     }
 
     @GetMapping("/{id}")
@@ -30,7 +39,7 @@ public class UserController {
         if(user==null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(new UserDto(user.getId(),user.getEmail(),user.getName()),HttpStatus.OK);
+        return new ResponseEntity<>(userMapper.toDto(user),HttpStatus.OK);
     }
 
 }
