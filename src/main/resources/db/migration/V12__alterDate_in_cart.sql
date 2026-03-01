@@ -1,0 +1,2 @@
+ALTER TABLE cart
+    MODIFY date_created DATE DEFAULT (CURRENT_DATE);
