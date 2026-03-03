@@ -1,5 +1,7 @@
 package com.sachin_s_k.shopping_cart.controllers;
 
+import com.sachin_s_k.shopping_cart.exception.InvalidCredentialException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,5 +21,13 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(errors);
 
+    }
+    @ExceptionHandler(InvalidCredentialException.class)
+    public ResponseEntity<Map<String,String>> handleInvalidCredential(
+           InvalidCredentialException ex){
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", ex.getMessage()));
     }
 }

@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
@@ -16,7 +18,6 @@ public class CartItem {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
@@ -27,5 +28,9 @@ public class CartItem {
 
     @Column(name = "quantity",nullable = false)
     private Integer quantity;
+
+    public BigDecimal getTotalPrice(){
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    }
 
 }

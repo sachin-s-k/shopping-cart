@@ -10,7 +10,6 @@ import lombok.Data;
 public class RegisterUserRequest {
     @NotBlank(message = "Name is required")
     @Size(max=255, message = "Name at least less than 255 characters")
-
     private String name;
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")

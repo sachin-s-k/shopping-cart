@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -29,6 +30,7 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
     @GetMapping
     public Iterable<UserDto> sayHello(
             @RequestHeader(name="x-auth-token",required = false) String authToken,@RequestParam(required = false,defaultValue = "",name = "sort") String sortBy){
@@ -58,6 +60,7 @@ public class UserController {
            );
        }
         var user=  userMapper.toEntity(request);
+       user.setPassword(passwordEncoder.encode(user.getPassword()));
         var response = userRepository.save(user);
         var userDto= userMapper.toDto(user);
         var uri=uriComponentsBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
