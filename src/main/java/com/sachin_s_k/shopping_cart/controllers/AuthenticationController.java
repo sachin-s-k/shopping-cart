@@ -3,6 +3,9 @@ package com.sachin_s_k.shopping_cart.controllers;
 
 import com.sachin_s_k.shopping_cart.dtos.JwtResponse;
 import com.sachin_s_k.shopping_cart.dtos.LoginUserRequest;
+import com.sachin_s_k.shopping_cart.dtos.UserDto;
+import com.sachin_s_k.shopping_cart.mappers.UserMapper;
+import com.sachin_s_k.shopping_cart.repositories.UserRepository;
 import com.sachin_s_k.shopping_cart.services.AuthenticationService;
 import com.sachin_s_k.shopping_cart.services.JwtService;
 import jakarta.validation.Valid;
@@ -12,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
      @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginUserRequest userRequest){
 
@@ -33,6 +39,27 @@ return ResponseEntity.ok(new JwtResponse(token));
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Void> handleBadCredentialException(){
          return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+    }
+     @PostMapping("/validate")
+    public boolean validateToken(@RequestHeader("Authorization") String authHeader){
+         System.out.println("validate called");
+         var token= authHeader.replace("Bearer ","");
+
+        return jwtService.validateToken(token );
+
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDto> me(){
+        var authentication=SecurityContextHolder.getContext().getAuthentication();
+        var email=(String) authentication.getPrincipal();
+        var user= userRepository.findByEmail(email).orElse(null);
+        if(user==null){
+            return ResponseEntity.notFound().build();
+        }
+        var userDto=userMapper.toDto(user);
+        return ResponseEntity.ok(userDto);
 
     }
 
