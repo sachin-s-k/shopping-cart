@@ -62,6 +62,8 @@ private List<Address> addresses= new ArrayList<>();
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private Set<Product> wishlist = new HashSet<>();
-
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+ private Role role;
 
 }

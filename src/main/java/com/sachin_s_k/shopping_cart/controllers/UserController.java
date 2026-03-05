@@ -5,6 +5,7 @@ import com.sachin_s_k.shopping_cart.dtos.ChangePasswordRequest;
 import com.sachin_s_k.shopping_cart.dtos.RegisterUserRequest;
 import com.sachin_s_k.shopping_cart.dtos.UpdateUserRequest;
 import com.sachin_s_k.shopping_cart.dtos.UserDto;
+import com.sachin_s_k.shopping_cart.entities.Role;
 import com.sachin_s_k.shopping_cart.entities.User;
 import com.sachin_s_k.shopping_cart.mappers.UserMapper;
 import com.sachin_s_k.shopping_cart.repositories.UserRepository;
@@ -61,6 +62,7 @@ public class UserController {
        }
         var user=  userMapper.toEntity(request);
        user.setPassword(passwordEncoder.encode(user.getPassword()));
+       user.setRole(Role.USER);
         var response = userRepository.save(user);
         var userDto= userMapper.toDto(user);
         var uri=uriComponentsBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
