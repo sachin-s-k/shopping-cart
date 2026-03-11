@@ -1,8 +1,11 @@
 package com.sachin_s_k.shopping_cart.controllers;
 
+import com.sachin_s_k.shopping_cart.dtos.ErrorDto;
 import com.sachin_s_k.shopping_cart.exception.InvalidCredentialException;
+import org.springframework.http.HttpMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +15,11 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<ErrorDto> handleUnreadableMessage(){
+        return  ResponseEntity.badRequest().body(new ErrorDto("Invalid Request Body"));
+
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String,String>> handleValidationErrors(MethodArgumentNotValidException exception){
         var errors= new HashMap<String, String>();

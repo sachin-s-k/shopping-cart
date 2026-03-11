@@ -25,6 +25,7 @@ public class CartService  {
     private final CartMapper cartMapper;
 
     public CartDto createCart(){
+        System.out.println("called");
         var cart= new Cart();
 
         cartRepository.save(cart);
@@ -34,12 +35,13 @@ public class CartService  {
 
     public CartItemDto addToCart(UUID cartId, Long productId){
         var cart= cartRepository.getCartWithItems(cartId).orElse(null);
-
+        System.out.println(cart+"caarResponse");
         if(cart==null){
            throw new CartNotFoundException();
         }
 
         var product = productRepository.findById(productId).orElse(null);
+        System.out.println(product+"======>");
 
         if(product==null){
 throw  new ProductNotFoundException();
@@ -47,7 +49,7 @@ throw  new ProductNotFoundException();
 
         var cartItem= cart.addItem(product);
         cartRepository.save(cart);
-
+        System.out.println(cartItem+"cartItemmmmm");
         return   cartMapper.toDto(cartItem);
     }
 

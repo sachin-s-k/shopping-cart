@@ -32,13 +32,16 @@ public class CartController {
     @PostMapping
 public ResponseEntity<CartDto> createCart(UriComponentsBuilder uriBuilder){
  var cartDto= cartService.createCart();
-    var uri= uriBuilder.path("/carts/{id}").buildAndExpand(  cartService.createCart().getId()).toUri();
+
+    var uri= uriBuilder.path("/carts/{id}").buildAndExpand(cartService.createCart().getId()).toUri();
      return ResponseEntity.created(uri).body(cartDto);
 }
 
 @PostMapping("/{cartId}/items")
 public ResponseEntity<CartItemDto> addToCart(@PathVariable UUID cartId,@Valid @RequestBody AddItemToCartDto request){
+    System.out.println("calllled");
     var cartItemDto= cartService.addToCart(cartId,request.getProductId());
+    System.out.println(cartItemDto+"cartDTO-------->>>>>>>>");
         return  ResponseEntity.status(HttpStatus.CREATED).body(cartItemDto);
 
 }
