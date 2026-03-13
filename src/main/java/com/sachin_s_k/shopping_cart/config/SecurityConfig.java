@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .csrf(c->c.disable())
                 .authorizeHttpRequests(c->
                         c.requestMatchers("/carts/**").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/users").permitAll()
+                                .requestMatchers("/users/**").permitAll()
                                 .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                                 .requestMatchers(HttpMethod.POST,"/auth/login").permitAll().
                         requestMatchers(HttpMethod.POST,"/auth/refresh").permitAll().
