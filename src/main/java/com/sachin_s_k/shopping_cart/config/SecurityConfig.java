@@ -48,6 +48,7 @@ public class SecurityConfig {
         //Disable csrf
         // Authorize
 
+
         http.
                 sessionManagement(c->
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
