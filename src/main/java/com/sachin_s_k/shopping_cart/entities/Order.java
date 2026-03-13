@@ -3,12 +3,9 @@ package com.sachin_s_k.shopping_cart.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.aspectj.weaver.ast.Or;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,7 +23,7 @@ public class Order {
     private User customer;
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private PaymentStatus orderStatus;
     @Column(name = "created_at",insertable = false,updatable = false)
      private LocalDateTime createdAt;
      @OneToMany(mappedBy = "order",cascade = CascadeType.PERSIST)
@@ -36,7 +33,7 @@ public class Order {
     public static Order fromCart(Cart cart,User customer){
         var order= new Order();
         order.setCustomer(customer);
-        order.setOrderStatus(OrderStatus.PENDING);
+        order.setOrderStatus(PaymentStatus.PENDING);
         order.setTotalPrice(cart.getTotalPrice());
 
         cart.getCartItems().forEach(cartItem -> {
@@ -44,9 +41,14 @@ public class Order {
                     order,cartItem.getProduct(),
                     cartItem.getQuantity()
            );
+            order.getItems().add(orderItem);
 
     });
         return  order;
 
 }
+
+ public boolean isPlacedBy(User user){
+        return  this.customer.equals(user);
+ }
 }
