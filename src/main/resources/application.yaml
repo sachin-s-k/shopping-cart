@@ -4,6 +4,9 @@ spring:
     name: shopping-cart
   profiles:
     active: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
 jwt:
   secret: ${JWT_SECRET}
   accessTokenExpiration: 900      # 15 minutes
